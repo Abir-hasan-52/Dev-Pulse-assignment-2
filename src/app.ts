@@ -3,7 +3,8 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import { authRegisterRoute } from "./auth/auth.route";
+import { authRegisterRoute } from "./modules/auth/auth.route";
+ 
 
 const app: Application = express();
 
