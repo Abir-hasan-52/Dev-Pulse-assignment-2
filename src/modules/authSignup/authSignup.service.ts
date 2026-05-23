@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import type { IUser } from "./auth.interface";
+import type { IUser } from "./authSignup.interface";
 import { pool } from "../../db";
  
 
@@ -20,6 +20,6 @@ const createUserAuthIntoDB = async (payload: IUser) => {
   return result;
 };
 
-export const authService = {
+export const authSignupService = {
   createUserAuthIntoDB,
 };

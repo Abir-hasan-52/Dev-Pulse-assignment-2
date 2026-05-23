@@ -3,8 +3,8 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import { authRegisterRoute } from "./modules/auth/auth.route";
- 
+import { authSignupRoute } from "./modules/authSignup/authSignup.route";
+import { authLoginRouter } from "./modules/authLogin/authlogin.route";
 
 const app: Application = express();
 
@@ -18,7 +18,7 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-
-app.use("/api/auth",authRegisterRoute)
+app.use("/api/auth", authSignupRoute);
+app.use("/api/auth",authLoginRouter);
 
 export default app;
