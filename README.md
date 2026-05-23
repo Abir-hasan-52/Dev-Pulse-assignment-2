@@ -9,6 +9,8 @@ A collaborative backend API platform for software teams to report bugs, suggest 
 🔗 [https://your-live-link.com](https://devpulse-assign2.vercel.app)
 
 ---
+> ⚠️ **Note:** If the live link does not work, please download **1.1.1.1 VPN** by Cloudflare and try again.
+> 🔗 Download: [1.1.1.1 for Windows/Mac/Mobile](https://1.1.1.1/)
 
 ## 📂 GitHub Repository
 
