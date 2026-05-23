@@ -61,48 +61,57 @@ const getsingleIssue = async (req: Request, res: Response) => {
   }
 };
 
- const updateIssue = async (
-  req: Request,
-  res: Response
-) => {
-
+const updateIssue = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-
     const userId = req.user!.id;
 
     const userRole = req.user!.role;
 
-    const result =
-      await issueService.updateIssueIntoDB(
-        id as string,
-        req.body,
-        {
-          id: userId,
-          role: userRole,
-        }
-      );
+    const result = await issueService.updateIssueIntoDB(
+      id as string,
+      req.body,
+      {
+        id: userId,
+        role: userRole,
+      },
+    );
 
     res.status(200).json({
       success: true,
-      message:
-        "Issue updated successfully",
+      message: "Issue updated successfully",
       data: result,
     });
-
   } catch (error: unknown) {
-
     const errorMessage =
-      error instanceof Error
-        ? error.message
-        : "Something went wrong";
+      error instanceof Error ? error.message : "Something went wrong";
 
     res.status(500).json({
       success: false,
       message: errorMessage,
     });
+  }
+};
 
+const deleteIssue = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    await issueService.deleteIssueFromDB(id as  string);
+
+    res.status(200).json({
+      success: true,
+      message: "Issue deleted successfully",
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Something went wrong";
+
+    res.status(500).json({
+      success: false,
+      message: errorMessage,
+    });
   }
 };
 
@@ -111,4 +120,5 @@ export const issueController = {
   getAllIssues,
   getsingleIssue,
   updateIssue,
+  deleteIssue,
 };
