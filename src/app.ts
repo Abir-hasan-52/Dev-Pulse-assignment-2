@@ -6,12 +6,17 @@ import express, {
 import { authSignupRoute } from "./modules/authSignup/authSignup.route";
 import { authLoginRouter } from "./modules/authLogin/authlogin.route";
 import { issueRouter } from "./modules/issue/issue.route";
-
+import cors from "cors";
 const app: Application = express();
 
 // express middle ware
 app.use(express.json());
 
+app.use(
+  cors({
+    origin: "http://localhost:5000",
+  }),
+);
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     message: "DevPulse express server is running!",
