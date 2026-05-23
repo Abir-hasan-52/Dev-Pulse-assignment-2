@@ -34,6 +34,115 @@ const createIssueIntoDB = async (
   return result.rows[0];
 };
 
+const getAllIssuesFromDB = async (
+  query: Record<string, unknown>
+) => {
+
+  // query params
+  const sort =
+    query.sort === "oldest"
+      ? "ASC"
+      : "DESC";
+
+  const type = query.type;
+  const status = query.status;
+
+  // dynamic query
+  let sql = `
+    SELECT *
+    FROM issues
+  `;
+
+  const conditions: string[] = [];
+  const values: unknown[] = [];
+
+  // filtering
+  if (type) {
+    values.push(type);
+
+    conditions.push(
+      `type = $${values.length}`
+    );
+  }
+
+  if (status) {
+    values.push(status);
+
+    conditions.push(
+      `status = $${values.length}`
+    );
+  }
+
+  // add WHERE
+  if (conditions.length > 0) {
+    sql += `
+      WHERE ${conditions.join(" AND ")}
+    `;
+  }
+
+  // sorting
+  sql += `
+    ORDER BY created_at ${sort}
+  `;
+
+  // get issues
+  const issuesResult =
+    await pool.query(sql, values);
+
+  const issues = issuesResult.rows;
+
+  // collect reporter ids
+  const reporterIds = [
+    ...new Set(
+      issues.map(
+        issue => issue.reporter_id
+      )
+    ),
+  ];
+
+  // get users separately (NO JOIN)
+  const usersResult =
+    await pool.query(
+      `
+        SELECT id, name, role
+        FROM users
+        WHERE id = ANY($1)
+      `,
+      [reporterIds]
+    );
+
+  const users = usersResult.rows;
+
+  // merge manually
+  const finalIssues = issues.map(issue => {
+
+    const reporter = users.find(
+      user => user.id === issue.reporter_id
+    );
+
+    return {
+      id: issue.id,
+      title: issue.title,
+      description: issue.description,
+      type: issue.type,
+      status: issue.status,
+
+      reporter: {
+        id: reporter?.id,
+        name: reporter?.name,
+        role: reporter?.role,
+      },
+
+      created_at: issue.created_at,
+      updated_at: issue.updated_at,
+    };
+  });
+
+  return finalIssues;
+};
+
+
 export const issueService = {
   createIssueIntoDB,
+  getAllIssuesFromDB
 };
