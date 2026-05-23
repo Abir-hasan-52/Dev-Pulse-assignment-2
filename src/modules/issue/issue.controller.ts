@@ -43,10 +43,10 @@ const getAllIssues = async (req: Request, res: Response) => {
   }
 };
 const getsingleIssue = async (req: Request, res: Response) => {
-    const { id } = req.params;
+  const { id } = req.params;
   try {
-    const result = await issueService.getSingleIssueFromDB(id as string)
-     res.status(200).json({
+    const result = await issueService.getSingleIssueFromDB(id as string);
+    res.status(200).json({
       success: true,
       data: result,
     });
@@ -61,8 +61,54 @@ const getsingleIssue = async (req: Request, res: Response) => {
   }
 };
 
+ const updateIssue = async (
+  req: Request,
+  res: Response
+) => {
+
+  const { id } = req.params;
+
+  try {
+
+    const userId = req.user!.id;
+
+    const userRole = req.user!.role;
+
+    const result =
+      await issueService.updateIssueIntoDB(
+        id as string,
+        req.body,
+        {
+          id: userId,
+          role: userRole,
+        }
+      );
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Issue updated successfully",
+      data: result,
+    });
+
+  } catch (error: unknown) {
+
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Something went wrong";
+
+    res.status(500).json({
+      success: false,
+      message: errorMessage,
+    });
+
+  }
+};
+
 export const issueController = {
   createIssue,
   getAllIssues,
-  getsingleIssue
+  getsingleIssue,
+  updateIssue,
 };

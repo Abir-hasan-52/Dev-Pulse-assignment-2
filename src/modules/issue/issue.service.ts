@@ -197,8 +197,109 @@ const getSingleIssueFromDB = async (
   };
 };
 
+const updateIssueIntoDB = async (
+  issueId: string,
+  payload: {
+    title?: string;
+    description?: string;
+    type?: "bug" | "feature_request";
+    status?: "open" | "in_progress" | "resolved";
+  },
+  user: {
+    id: string;
+    role: string;
+  }
+) => {
+
+  // 1. find issue
+  const issueResult =
+    await pool.query(
+      `
+        SELECT *
+        FROM issues
+        WHERE id = $1
+      `,
+      [issueId]
+    );
+
+  // issue exists?
+  if (issueResult.rows.length === 0) {
+    throw new Error("Issue not found");
+  }
+
+  const issue = issueResult.rows[0];
+
+  // 2. authorization
+
+  // contributor rules
+  if (user.role === "contributor") {
+
+    // own issue?
+    if (issue.reporter_id !== user.id) {
+      throw new Error(
+        "Forbidden! Not your issue"
+      );
+    }
+
+    // issue must be open
+    if (issue.status !== "open") {
+      throw new Error(
+        "Only open issues can be updated"
+      );
+    }
+  }
+
+  // 3. prepare update values
+
+  const title =
+    payload.title ?? issue.title;
+
+  const description =
+    payload.description ??
+    issue.description;
+
+  const type =
+    payload.type ?? issue.type;
+
+  // only maintainer can update status
+  let status = issue.status;
+
+  if (
+    user.role === "maintainer" &&
+    payload.status
+  ) {
+    status = payload.status;
+  }
+
+  // 4. update query
+  const result =
+    await pool.query(
+      `
+        UPDATE issues
+        SET
+          title = $1,
+          description = $2,
+          type = $3,
+          status = $4,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $5
+        RETURNING *
+      `,
+      [
+        title,
+        description,
+        type,
+        status,
+        issueId,
+      ]
+    );
+
+  return result.rows[0];
+};
+
 export const issueService = {
   createIssueIntoDB,
   getAllIssuesFromDB,
-  getSingleIssueFromDB
+  getSingleIssueFromDB,
+  updateIssueIntoDB
 };
