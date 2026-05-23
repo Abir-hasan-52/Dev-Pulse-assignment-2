@@ -1,18 +1,43 @@
 import type { Request, Response } from "express";
+import { issueService } from "./issue.service";
 
-const createIssue = async (req: Request, res: Response) => {
+const createIssue = async (
+  req: Request,
+  res: Response
+) => {
+
   try {
 
+    const reporter_id = req.user!.id;
 
+    const result =
+      await issueService.createIssueIntoDB(
+        req.body,
+        reporter_id
+      );
 
-  } catch (error: any) {
+    res.status(201).json({
+      success: true,
+      message: "Issue created successfully",
+      data: result,
+    });
+
+  } catch (error: unknown) {
+
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Something went wrong";
+
     res.status(500).json({
       success: false,
-      message: error.message,
-      error: error,
+      message: errorMessage,
+      errors: errorMessage,
     });
+
   }
 };
-export const issueController={
-    createIssue,
-}
+
+export const issueController = {
+  createIssue,
+};
