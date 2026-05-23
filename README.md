@@ -12,7 +12,7 @@ A collaborative backend API platform for software teams to report bugs, suggest 
 
 ## 📂 GitHub Repository
 
-🔗 [https://github.com/yourusername/devpulse-api](https://github.com/yourusername/devpulse-api)
+🔗 [https://github.com/yourusername/devpulse-api](https://github.com/Abir-hasan-52/Dev-Pulse-assignment-2)
 
 ---
 
@@ -232,5 +232,6 @@ npm start
 ## 👨‍💻 Author
 
 **Abir Hasan**
+
 
 ---
