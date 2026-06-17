@@ -38,6 +38,15 @@ const createIssue = async (req: Request, res: Response) => {
 const getAllIssues = async (req: Request, res: Response) => {
   try {
     const result = await issueService.getAllIssuesFromDB(req.query);
+
+    if (result.length === 0) {
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "No issues found",
+        data: [],
+      });
+    }
     sendResponse(res, {
       statusCode: 200,
       success: true,
@@ -82,7 +91,7 @@ const getsingleIssue = async (req: Request, res: Response) => {
     const errorMessage =
       error instanceof Error ? error.message : "Something went wrong";
     sendResponse(res, {
-      statusCode: 500,
+      statusCode: 404,
       success: false,
       message: errorMessage,
       errors: errorMessage,

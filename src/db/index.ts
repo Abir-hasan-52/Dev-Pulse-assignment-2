@@ -11,8 +11,8 @@ export const initDB = async () => {
     CREATE TABLE IF NOT EXISTS users (
 
     id SERIAL PRIMARY KEY,
-    name VARCHAR(25) NOT NULL,
-    email VARCHAR(25) NOT NULL UNIQUE,
+    name VARCHAR(400) NOT NULL,
+    email VARCHAR(250) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'contributor'
     CHECK (role IN ('contributor', 'maintainer')),
